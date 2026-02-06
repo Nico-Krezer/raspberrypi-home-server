@@ -1,37 +1,43 @@
-🌐 Raspberry Pi Home Server & DNS-Sinkhole
-  Dieses Projekt beschreibt den Aufbau und die Konfiguration eines energieeffizienten "Always-On"-Servers auf Basis eines Raspberry Pi 4. 
-  Das Hauptziel ist die netzweite Filterung von Werbung und Tracking-Domains auf DNS-Ebene für alle Geräte im Haushalt.
-🎯 Zielsetzung
-    Headless-Betrieb: 
-      Aufbau eines Servers ohne Monitor und Tastatur.
-    Zentrale Verwaltung: 
-      Steuerung der Netzwerkdienste für alle Geräte im Heimnetz.
-    Privatsphäre & Performance: 
-      Verbesserung des Surf-Erlebnisses durch netzweite Werbeblockierung.
-🛠️ Verwendete Komponenten
-      Hardware:
-        Raspberry Pi 4 Model B (4GB RAM).
-        32GB microSD-Karte.
-        Passives Kühlkörper-Set & Gehäuse für stabilen Dauerbetrieb.
-    Software:
-        Betriebssystem: Raspberry Pi OS (Linux).
-        DNS-Filter: Pi-hole (Server-Applikation).
-    Administration: 
-        OpenSSH für die Fernwartung via Windows PowerShell.
-⚙️ Projektablauf & Realisierung
-     Headless Setup
-       Das System wurde von Anfang an für den Betrieb ohne Peripheriegeräte konzipiert. WLAN und SSH wurden bereits bei der Image-Erstellung auf der microSD-Karte vorkonfiguriert.
-     Troubleshooting: Die SSH-Hürde
-       Beim Erstzugriff traten Probleme mit der SSH-Syntax und der Benutzer-Authentifizierung auf. Durch systematisches Testen in der PowerShell konnte ich die Verbindung erfolgreich herstellen und die Systemaktualisierungen sowie die Pi-hole-Installation durchführen.
-    Netzwerk-Automatisierung (DHCP-Integration)
-      Um die Lösung auf ein professionelles Level zu heben, wurde die Konfiguration von manuellen Client-Einträgen auf eine zentrale Automatisierung umgestellt:
-      Statische IP: Dem Raspberry Pi wurde die feste Adresse 192.168.2.102 zugewiesen.
-      Router-Konfiguration: Die IP des Pi-hole wurde direkt im Router als primärer DNS-Server hinterlegt.
-   LAN & WLAN Support:
-      Dadurch profitieren nun automatisch alle Geräte – egal ob per LAN-Kabel oder Funk verbunden – von der Filterung, ohne dass manuelle Einstellungen an den Endgeräten nötig sind.
-Verifizierung: 
-  Der Erfolg des Projekts lässt sich direkt im Pi-hole Dashboard ablesen : Die Statistiken zeigen deutlich die Anzahl der blockierten DNS-Anfragen ("Queries Blocked"), während der reguläre Internetverkehr ungehindert fließt.
-  
-💡Learnings
-  Dieses Projekt war mein intensiver Einstieg in die Linux-Administration über die Kommandozeile. 
-  Ich habe gelernt, wie man Systeme ohne grafische Oberfläche verwaltet, Netzwerkprobleme analysiert und wie wichtig die korrekte Syntax bei verschlüsselten Verbindungen (SSH) ist.
+# 🖥️ Virtualisierungs-Testumgebung (Windows & Ubuntu)
+
+Dieses Projekt dokumentiert den Aufbau eines privaten Testnetzwerks zwischen einem Windows 11 Host-System und einer virtuellen Ubuntu-Maschine. Der Fokus lag auf der Netzwerkkonfiguration und der Optimierung des Datenaustauschs.
+
+---
+
+## 🎯 Zielsetzung
+* Einrichtung einer stabilen, privaten Netzwerkverbindung zwischen Host und VM.
+* Implementierung eines nahtlosen Datenaustauschs über gemeinsame Ordner.
+* Systematisches Troubleshooting bei Konfigurationsproblemen.
+
+---
+
+## 🛠️ Komponenten
+* **Virtualisierungs-Software:** Oracle VirtualBox.
+* **Gast-System:** Ubuntu Desktop.
+* **Host-System:** Windows 11.
+* **Tools:** VirtualBox Guest Additions.
+
+---
+
+## ⚙️ Projektablauf & Realisierung
+
+### 1. Netzwerk-Konfiguration (Host-only)
+Die VM wurde auf den **Host-only Adapter** umgestellt, um ein privates Netzwerk zu schaffen:
+* **Host-IP:** `192.168.56.1`
+* **Ubuntu-VM IP:** `192.168.56.100` (statisch vergeben).
+* **Verifizierung:** Erfolgreicher bidirektionaler Verbindungstest mittels **ping**-Befehl.
+
+### 2. Troubleshooting: Fehlende Netzwerk-Treiber
+Während der Einrichtung standen die Modi "Internes Netzwerk" und "Host-only Adapter" nicht zur Auswahl. 
+* **Lösung:** Durchführung der **"Repair"-Funktion** des VirtualBox-Installers, um die fehlenden virtuellen Netzwerk-Treiber korrekt nachzuinstallieren.
+
+### 3. Integrierter Datenaustausch
+Für eine effiziente Arbeit wurden "Gemeinsame Ordner" eingerichtet:
+* **Voraussetzung:** Erfolgreiche Installation der **VirtualBox Guest Additions**.
+* **Rechteverwaltung:** Hinzufügen des Ubuntu-Benutzers zur Gruppe `vboxsf` (`sudo adduser $USER vboxsf`).
+* **Ergebnis:** Automatischer Mount des Ordners unter `/media/sf_VM-Austausch` beim Systemstart.
+
+---
+
+## 💡 Learnings
+Ich habe gelernt, wie man spezifische Virtualisierungs-Features nutzt, um eine performante Testumgebung zu schaffen. Besonders die Fehleranalyse bei fehlenden Treibern und das Management von Linux-Gruppenberechtigungen waren wichtige Bestandteile dieses Projekts.
