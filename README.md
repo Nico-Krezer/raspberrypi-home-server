@@ -1,48 +1,43 @@
-# 🌐 Raspberry Pi Home Server & DNS-Sinkhole
+# 🖥️ Virtualisierungs-Testumgebung (Windows & Ubuntu)
 
-[cite_start]Dieses Projekt dokumentiert den Aufbau eines energieeffizienten "Always-On"-Heimservers auf Basis eines Raspberry Pi 4. Ziel ist die netzweite Filterung von Werbung und Tracking-Domains auf DNS-Ebene für alle Geräte im Haushalt[cite: 56, 68].
+Dieses Projekt dokumentiert den Aufbau eines privaten Testnetzwerks zwischen einem Windows 11 Host-System und einer virtuellen Ubuntu-Maschine. Der Fokus lag auf der Netzwerkkonfiguration und der Optimierung des Datenaustauschs.
 
 ---
 
 ## 🎯 Zielsetzung
-* [cite_start]**Headless-Betrieb:** Konfiguration und Verwaltung ohne Monitor/Tastatur[cite: 67].
-* [cite_start]**Zentrale Verwaltung:** Steuerung der Netzwerkdienste für das gesamte Heimnetz[cite: 68].
-* [cite_start]**Performance:** Verbesserung der Netzwerksicherheit durch Reduzierung von unerwünschtem Traffic[cite: 68].
+* Einrichtung einer stabilen, privaten Netzwerkverbindung zwischen Host und VM.
+* Implementierung eines nahtlosen Datenaustauschs über gemeinsame Ordner.
+* Systematisches Troubleshooting bei Konfigurationsproblemen.
 
 ---
 
-## 🛠️ Verwendete Komponenten
-
-### Hardware
-* [cite_start]**Raspberry Pi 4 Model B (4GB RAM)** [cite: 71]
-* [cite_start]**32GB microSD-Karte** [cite: 72]
-* [cite_start]**Passives Kühlkörper-Set & Gehäuse** für lautlosen Dauerbetrieb [cite: 73]
-
-### Software
-* [cite_start]**Betriebssystem:** Raspberry Pi OS (Linux) [cite: 75]
-* [cite_start]**DNS-Filter:** Pi-hole (Server-Applikation) [cite: 77]
-* [cite_start]**Administration:** OpenSSH für die Fernwartung via Windows PowerShell [cite: 78, 82]
+## 🛠️ Komponenten
+* **Virtualisierungs-Software:** Oracle VirtualBox.
+* **Gast-System:** Ubuntu Desktop.
+* **Host-System:** Windows 11.
+* **Tools:** VirtualBox Guest Additions.
 
 ---
 
 ## ⚙️ Projektablauf & Realisierung
 
-### 1. Headless Setup & SSH
-[cite_start]Die Hardware wurde montiert und das OS für den Betrieb ohne Peripherie vorkonfiguriert[cite: 80]. Der Erstzugriff erfolgte via SSH. 
-* [cite_start]**Troubleshooting:** Probleme mit der SSH-Syntax und Authentifizierung wurden durch systematisches Testing behoben[cite: 82].
+### 1. Netzwerk-Konfiguration (Host-only)
+Die VM wurde auf den **Host-only Adapter** umgestellt, um ein privates Netzwerk zu schaffen:
+* **Host-IP:** `192.168.56.1`
+* **Ubuntu-VM IP:** `192.168.56.100` (statisch vergeben).
+* **Verifizierung:** Erfolgreicher bidirektionaler Verbindungstest mittels **ping**-Befehl.
 
-### 2. Netzwerk-Automatisierung (DHCP-Integration)
-Um eine nahtlose Integration zu erreichen, wurde das System auf zentrale Steuerung umgestellt:
-* [cite_start]**Statische IP:** Der Pi wurde fest auf `192.168.2.102` konfiguriert[cite: 84].
-* **Router-Integration:** Die IP des Pi-hole wurde im Router als primärer DNS-Server hinterlegt.
-* **LAN & WLAN Support:** Alle Geräte (kabellos oder per LAN-Kabel) profitieren nun automatisch ohne manuelle Einzelkonfiguration von der Filterung.
+### 2. Troubleshooting: Fehlende Netzwerk-Treiber
+Während der Einrichtung standen die Modi "Internes Netzwerk" und "Host-only Adapter" nicht zur Auswahl. 
+* **Lösung:** Durchführung der **"Repair"-Funktion** des VirtualBox-Installers, um die fehlenden virtuellen Netzwerk-Treiber korrekt nachzuinstallieren.
 
----
-
-## 📊 Verifizierung & Erfolg
-[cite_start]Der Erfolg ist direkt im Pi-hole Dashboard sichtbar[cite: 86]. [cite_start]Die Block-Statistiken zeigen die gefilterten Anfragen in Echtzeit, während der restliche Datenverkehr stabil bleibt[cite: 86].
+### 3. Integrierter Datenaustausch
+Für eine effiziente Arbeit wurden "Gemeinsame Ordner" eingerichtet:
+* **Voraussetzung:** Erfolgreiche Installation der **VirtualBox Guest Additions**.
+* **Rechteverwaltung:** Hinzufügen des Ubuntu-Benutzers zur Gruppe `vboxsf` (`sudo adduser $USER vboxsf`).
+* **Ergebnis:** Automatischer Mount des Ordners unter `/media/sf_VM-Austausch` beim Systemstart.
 
 ---
 
 ## 💡 Learnings
-[cite_start]Dieses Projekt war mein Einstieg in die **Linux-Administration via Kommandozeile**[cite: 92]. [cite_start]Ich habe gelernt, wie man Systeme "headless" verwaltet, Netzwerkprobleme (DNS/IP) analysiert und wie kritisch die korrekte Syntax bei verschlüsselten Verbindungen ist[cite: 93].
+Ich habe gelernt, wie man spezifische Virtualisierungs-Features nutzt, um eine performante Testumgebung zu schaffen. Besonders die Fehleranalyse bei fehlenden Treibern und das Management von Linux-Gruppenberechtigungen waren wichtige Bestandteile dieses Projekts.
